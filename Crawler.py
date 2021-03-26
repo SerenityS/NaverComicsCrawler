@@ -1,3 +1,5 @@
+import os
+import re
 import requests
 
 from bs4 import BeautifulSoup
@@ -25,12 +27,17 @@ class NaverComicsCrawler:
             if "titleId" in pair:
                 self.title_id = pair.split("=")[1]
             elif "no" in pair:
-                self.latest_epi_no = pair.split("=")[1]
+                self.latest_epi_no = int(pair.split("=")[1])
 
         print(f"ComicTitle = {self.title}, titleId = {self.title_id}, latestEpisode = {self.latest_epi_no}")
 
-    def getImage(self, first_epi, last_epi):
-        for i in range(first_epi, last_epi + 1):
+    def getImage(self):
+        for i in range(1, self.latest_epi_no + 1):
+            print(f"{i}화 / {self.latest_epi_no}화 다운로드 중...")
+
+            folder_name = re.sub('[\/:*?"<>|]','',self.title) + f"/{i}화/"
+            os.makedirs(folder_name, exist_ok=True)
+
             wt_viewer_parsed = requests.get(f"https://comic.naver.com/webtoon/detail.nhn?titleId={self.title_id}&no={i}")
             wt_viewer_soup = BeautifulSoup(wt_viewer_parsed.text, "html.parser")
             wt_viewer = wt_viewer_soup.find(class_="wt_viewer")
@@ -40,7 +47,7 @@ class NaverComicsCrawler:
             for wt_img in wt_imgs:
                 img_url = wt_img['src']
                 img = requests.get(img_url, headers={'referer': self.url})
-                with open(f'{idx}.jpg', 'wb') as f:
+                with open(f'{folder_name}/{idx}.jpg', 'wb') as f:
                     f.write(img.content)
                     f.close()
                 idx += 1
