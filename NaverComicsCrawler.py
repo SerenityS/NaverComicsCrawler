@@ -21,7 +21,7 @@ class NaverComicsCrawler:
         self.title = comic_soup.title.string[:-10]
 
         latest_epi_url = comic_soup.find(class_="viewList")
-        latest_epi_url = latest_epi_url.find_all("tr")[2].find('a')['href']
+        latest_epi_url = latest_epi_url.find(class_="title").find('a')['href']
         url, query = latest_epi_url.split('?')
         for pair in query.split('&'):
             if "titleId" in pair:
