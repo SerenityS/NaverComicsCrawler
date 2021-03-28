@@ -35,7 +35,7 @@ class NaverComicsCrawler:
         for i in range(1, self.latest_epi_no + 1):
             print(f"{i}화 / {self.latest_epi_no}화 다운로드 중...")
 
-            folder_name = re.sub('[\/:*?"<>|]','',self.title) + f"/{i}화/"
+            folder_name = re.sub('[\/:*?"<>|]', '', self.title) + f"/{i}화/"
             os.makedirs(folder_name, exist_ok=True)
 
             wt_viewer_parsed = requests.get(f"https://comic.naver.com/webtoon/detail.nhn?titleId={self.title_id}&no={i}")
