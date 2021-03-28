@@ -1,5 +1,8 @@
 import os
 import re
+import shutil
+import zipfile
+
 import requests
 
 from bs4 import BeautifulSoup
@@ -35,7 +38,7 @@ class NaverComicsCrawler:
         for i in range(1, self.latest_epi_no + 1):
             print(f"{i}화 / {self.latest_epi_no}화 다운로드 중...")
 
-            folder_name = re.sub('[\/:*?"<>|]', '', self.title) + f"/{i}화/"
+            folder_name = re.sub('[\/:*?"<>|]', '', self.title) + f"/{i}화"
             os.makedirs(folder_name, exist_ok=True)
 
             wt_viewer_parsed = requests.get(f"https://comic.naver.com/webtoon/detail.nhn?titleId={self.title_id}&no={i}")
@@ -51,3 +54,16 @@ class NaverComicsCrawler:
                     f.write(img.content)
                     f.close()
                 idx += 1
+
+            self.zipImage(folder_name)
+
+    def zipImage(self, folder_name):
+        comic_zip = zipfile.ZipFile((folder_name + ".zip"), 'w')
+
+        for folder, _, files in os.walk(folder_name):
+            for file in files:
+                if file.endswith('.jpg'):
+                    comic_zip.write(os.path.join(folder, file), file, compress_type=zipfile.ZIP_DEFLATED)
+        comic_zip.close()
+
+        shutil.rmtree(folder_name)
