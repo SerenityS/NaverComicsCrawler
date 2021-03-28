@@ -32,7 +32,7 @@ class NaverComicsCrawler:
             elif "no" in pair:
                 self.latest_epi_no = int(pair.split("=")[1])
 
-        print(f"ComicTitle = {self.title}, titleId = {self.title_id}, latestEpisode = {self.latest_epi_no}")
+        print(f"\n웹툰 제목 = {self.title}, 웹툰 ID = {self.title_id}, 최근화 = {self.latest_epi_no}화\n")
 
     def getImage(self):
         for i in range(1, self.latest_epi_no + 1):
